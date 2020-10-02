@@ -6,6 +6,8 @@
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-5.2.xsd">
 	
 	<int:channel id="inputChannel"/>
+	<int:channel id="outputChannel"/>
 	<bean class="com.rnd.springintegrations.PrintService" id="printService" />
+	<int:service-activator ref="printService" method="print" input-channel="inputChannel" output-channel="outputChannel"/>
 
 </beans>

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,7 +22,12 @@ import org.springframework.messaging.MessagingException;
 @ImportResource("integrations/integrations-context.xml")
 public class SpringintegrationApplication implements ApplicationRunner {
 	@Autowired
-	private DirectChannel channel;
+	@Qualifier("inputChannel")
+	private DirectChannel inputChannel;
+	
+	@Autowired
+	@Qualifier("outputChannel")
+	private DirectChannel outputChannel;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringintegrationApplication.class, args);
@@ -32,14 +38,11 @@ public class SpringintegrationApplication implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		
-		channel.subscribe(new MessageHandler() {
+		outputChannel.subscribe(new MessageHandler() {
 			
-			@SuppressWarnings("unchecked")
 			@Override
 			public void handleMessage(Message<?> message) throws MessagingException {
-				PrintService printService=new PrintService();
-				printService.print((Message<String>) message);
-				
+				System.out.println(message.getPayload());
 			}
 		});
 		
@@ -47,7 +50,7 @@ public class SpringintegrationApplication implements ApplicationRunner {
 		headersMap.put("Content-Type", "Application/JSON");
 //		Message<String> message=new GenericMessage<String>("creating a new message",new MessageHeaders(headersMap));
 		Message<String> message=MessageBuilder.withPayload("Hello world").setHeader("Content-Type", "Application/JSON").build();
-		channel.send(message);
+		inputChannel.send(message);
 		
 	}
 }
