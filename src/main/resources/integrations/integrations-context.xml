@@ -8,6 +8,4 @@
 	<int:channel id="inputChannel"/>
 	<bean class="com.rnd.springintegrations.PrintService" id="printService" />
 
-
-
 </beans>
