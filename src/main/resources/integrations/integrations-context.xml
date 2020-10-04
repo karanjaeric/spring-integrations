@@ -2,27 +2,30 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-5.2.xsd">
 
+	<task:executor id="executor" pool-size="5"/>
+	
 	<int:gateway
 		service-interface="com.rnd.springintegrations.PrintGateway"
 		default-request-channel="inputChannel"></int:gateway>
-	<int:channel id="inputChannel">
-	<int:dispatcher failover="false"/>
-	</int:channel>
+	<int:publish-subscribe-channel task-executor="executor"
+		id="inputChannel" />
 	<bean class="com.rnd.springintegrations.PrintService"
 		id="printService" />
-		
-		<bean class="com.rnd.springintegrations.UppercasePrintService"
+
+	<bean class="com.rnd.springintegrations.UppercasePrintService"
 		id="uppercasePrintService" />
-	<int:service-activator order="1" ref="printService"
-		method="print" input-channel="inputChannel">
+	<int:service-activator order="1"
+		ref="printService" method="print" input-channel="inputChannel">
 	</int:service-activator>
-	
-	<int:service-activator order="2" ref="uppercasePrintService"
-		method="print" input-channel="inputChannel">
+
+	<int:service-activator order="2"
+		ref="uppercasePrintService" method="print"
+		input-channel="inputChannel">
 	</int:service-activator>
 
 </beans>
