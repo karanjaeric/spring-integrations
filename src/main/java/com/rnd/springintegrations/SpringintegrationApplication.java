@@ -34,7 +34,9 @@ public class SpringintegrationApplication implements ApplicationRunner {
 		List<Future<Message<String>>> futures=new ArrayList<>();
 		
 		for (int x=0;x<10;x++) {
-			Message<String> message=MessageBuilder.withPayload("Printing message payload for "+x).setHeader("messageNumber", x).build();
+			Message<String> message=MessageBuilder.withPayload("Printing message payload for "+x)
+					.setHeader("messageNumber", x)
+					.build();
 			System.out.println("Sending Message "+x);
 			futures.add(this.gateway.print(message));
 			

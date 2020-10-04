@@ -10,12 +10,12 @@
 	
 	></int:gateway>
 	<int:channel id="inputChannel">
-		<int:queue capacity="10"/>
+		<int:priority-queue capacity="10" comparator="customMessageComparator"/>
 	</int:channel>
 	<bean class="com.rnd.springintegrations.PrintService" id="printService" />
+	<bean class="com.rnd.springintegrations.CustomMessageComparator" id="customMessageComparator" />
 	<int:service-activator ref="printService" method="print" input-channel="inputChannel">
-	
-	<int:poller fixed-rate="5" time-unit="SECONDS" max-messages-per-poll="2"/>
+	<int:poller fixed-rate="10" time-unit="SECONDS" max-messages-per-poll="2"/>
 	</int:service-activator>
 
 </beans>
