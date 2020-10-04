@@ -5,17 +5,24 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-5.2.xsd">
-	
-	<int:gateway service-interface="com.rnd.springintegrations.PrintGateway" default-request-channel="inputChannel"
-	
-	></int:gateway>
+
+	<int:gateway
+		service-interface="com.rnd.springintegrations.PrintGateway"
+		default-request-channel="inputChannel"></int:gateway>
 	<int:channel id="inputChannel">
-		<int:priority-queue capacity="10" comparator="customMessageComparator"/>
+	<int:dispatcher failover="false"/>
 	</int:channel>
-	<bean class="com.rnd.springintegrations.PrintService" id="printService" />
-	<bean class="com.rnd.springintegrations.CustomMessageComparator" id="customMessageComparator" />
-	<int:service-activator ref="printService" method="print" input-channel="inputChannel">
-	<int:poller fixed-rate="10" time-unit="SECONDS" max-messages-per-poll="2"/>
+	<bean class="com.rnd.springintegrations.PrintService"
+		id="printService" />
+		
+		<bean class="com.rnd.springintegrations.UppercasePrintService"
+		id="uppercasePrintService" />
+	<int:service-activator order="1" ref="printService"
+		method="print" input-channel="inputChannel">
+	</int:service-activator>
+	
+	<int:service-activator order="2" ref="uppercasePrintService"
+		method="print" input-channel="inputChannel">
 	</int:service-activator>
 
 </beans>

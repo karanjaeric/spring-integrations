@@ -14,7 +14,6 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
-
 @SpringBootApplication
 @Configuration
 @ImportResource("integrations/integrations-context.xml")
@@ -22,29 +21,20 @@ public class SpringintegrationApplication implements ApplicationRunner {
 	@Autowired
 	private PrintGateway gateway;
 
-
-
 	public static void main(String[] args) {
 		SpringApplication.run(SpringintegrationApplication.class, args);
-	
+
 	}
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		List<Future<Message<String>>> futures=new ArrayList<>();
-		
-		for (int x=0;x<10;x++) {
-			Message<String> message=MessageBuilder.withPayload("Printing message payload for "+x)
-					.setHeader("messageNumber", x)
-					.build();
-			System.out.println("Sending Message "+x);
-			futures.add(this.gateway.print(message));
-			
+		List<Future<Message<String>>> futures = new ArrayList<>();
+
+		for (int x = 0; x < 10; x++) {
+			Message<String> message = MessageBuilder.withPayload("Printing message payload for " + x)
+					.setHeader("messageNumber", x).build();
+			this.gateway.print(message);
 		}
-		
-		for(Future<Message<String>> future:futures) {
-			
-			System.out.println(future.get().getPayload());
-		}
+
 	}
 }
