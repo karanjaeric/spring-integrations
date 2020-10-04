@@ -10,6 +10,9 @@
 	<task:executor id="executor" pool-size="5" />
 	<int:channel id="pollableChannel">
 		<int:queue capacity="10" />
+		<int:interceptors>
+			<int:ref bean="customInterceptor" />
+		</int:interceptors>
 	</int:channel>
 	<int:bridge input-channel="pollableChannel"
 		output-channel="inputChannel">
@@ -26,6 +29,9 @@
 
 	<bean class="com.rnd.springintegrations.UppercasePrintService"
 		id="uppercasePrintService" />
+
+	<bean id="customInterceptor"
+		class="com.rnd.springintegrations.CustomChannelInterceptor" />
 	<int:service-activator order="1"
 		ref="printService" method="print" input-channel="inputChannel">
 	</int:service-activator>
