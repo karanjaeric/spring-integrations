@@ -7,13 +7,20 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-5.2.xsd">
 
-	<task:executor id="executor" pool-size="5"/>
-	
+	<task:executor id="executor" pool-size="5" />
+	<int:channel id="pollableChannel">
+		<int:queue capacity="10" />
+	</int:channel>
+	<int:bridge input-channel="pollableChannel"
+		output-channel="inputChannel">
+		<int:poller fixed-delay="5" time-unit="SECONDS"
+			max-messages-per-poll="2" />
+	</int:bridge>
 	<int:gateway
 		service-interface="com.rnd.springintegrations.PrintGateway"
-		default-request-channel="inputChannel"></int:gateway>
-	<int:publish-subscribe-channel task-executor="executor"
-		id="inputChannel" />
+		default-request-channel="pollableChannel"></int:gateway>
+	<int:publish-subscribe-channel
+		task-executor="executor" id="inputChannel" />
 	<bean class="com.rnd.springintegrations.PrintService"
 		id="printService" />
 
